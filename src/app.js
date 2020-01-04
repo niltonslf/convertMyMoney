@@ -12,7 +12,7 @@ app.use(routes)
 app.set('view engine', 'ejs')
 app.set('views', path.join(__dirname, 'views'))
 
-const port = proccess.env.PORT
+const port = process.env.PORT
 
 app.listen(port, () => {
   console.log(`Server started on port`)
