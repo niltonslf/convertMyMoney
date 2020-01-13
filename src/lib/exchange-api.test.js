@@ -1,7 +1,7 @@
 const {
   getExchangeRateAPI,
   extractExchangeRate,
-  getExchangeRate
+  pure: { getExchangeRate }
 } = require('./exchange-api')
 const axios = require('axios')
 
@@ -36,16 +36,44 @@ test('extractExchangeRate', () => {
   expect(exchangeRate).toBe(1.59)
 })
 
-test('getExchangeRate', async () => {
-  const res = {
-    data: [
-      {
-        high: 1.59
-      }
-    ]
-  }
-  axios.get.mockResolvedValue(res)
+describe('getExchangeRate', () => {
+  test('getExchangeRate OK', async () => {
+    const data = {
+      data: [
+        {
+          high: 1.59
+        }
+      ]
+    }
 
-  const price = await getExchangeRate()
-  expect(price).toBe(1.59)
+    const getExchangeRateAPI = jest.fn()
+    getExchangeRateAPI.mockResolvedValue(data)
+
+    const extractExchangeRate = jest.fn()
+    extractExchangeRate.mockReturnValue(1.59)
+
+    const res = await getExchangeRate({
+      getExchangeRateAPI,
+      extractExchangeRate
+    })()
+
+    expect(res).toBe(1.59)
+  })
+
+  test('getExchangeRate Err', async () => {
+    const data = {}
+
+    const getExchangeRateAPI = jest.fn()
+    getExchangeRateAPI.mockReturnValue(Promise.reject('err'))
+
+    const extractExchangeRate = jest.fn()
+    extractExchangeRate.mockReturnValue(1.59)
+
+    const res = await getExchangeRate({
+      getExchangeRateAPI,
+      extractExchangeRate
+    })()
+
+    expect(res).toBe('')
+  })
 })

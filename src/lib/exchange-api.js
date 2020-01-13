@@ -4,7 +4,10 @@ const apiUrl = 'http://economia.awesomeapi.com.br/USD-BRL/1?format=json'
 const getExchangeRateAPI = url => axios.get(url)
 const extractExchangeRate = res => res.data[0].high
 
-const getExchangeRate = async () => {
+const getExchangeRate = ({
+  getExchangeRateAPI,
+  extractExchangeRate
+}) => async () => {
   try {
     const res = await getExchangeRateAPI(apiUrl)
     const exchangeRate = extractExchangeRate(res)
@@ -17,5 +20,11 @@ const getExchangeRate = async () => {
 module.exports = {
   getExchangeRateAPI,
   extractExchangeRate,
-  getExchangeRate
+  getExchangeRate: getExchangeRate({
+    getExchangeRateAPI,
+    extractExchangeRate
+  }),
+  pure: {
+    getExchangeRate
+  }
 }
